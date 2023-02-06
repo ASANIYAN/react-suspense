@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { Suspense } from 'react';
+import { FetchData } from './components/hooks/FetchUsers';
+import { Spinner } from './components/loaders/Spinner';
+
+
+
+
 
 function App() {
+  const resource = FetchData();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Suspense fallback={<Spinner />}>
+        <UserDetails resource={resource} />
+      </Suspense>
   );
 }
 
 export default App;
+
+
+
+
+const UserDetails =  ({resource}) => {
+ 
+  const users = resource.user.read();
+  return(
+    <>
+      {users.map(user => (
+        <section 
+        key={user?.id}
+        style={{ 
+          marginTop: '50px', 
+          width: '100%', 
+          textAlign: 'center' 
+          }}
+        >
+            <p> Id: { user?.id } </p>
+            <p> Name: { user?.name } </p>
+            <p> Username: { user?.username } </p>
+            <p> Email: { user?.email } </p>
+            <p> City: { user?.address?.city } </p>
+        </section>
+      ))}
+    </>
+  );
+};
